@@ -39,12 +39,16 @@ require 'src/states/game/FadeOutState'
 require 'src/states/game/PlayState'
 require 'src/states/game/StartState'
 require 'src/states/game/MenuState'
+require 'src/states/game/AboutState'
+require 'src/states/game/InstructionsState'
 
 -- world management
 require 'src/world/Level'
 require 'src/world/tile_ids'
 require 'src/world/Tile'
 require 'src/world/TileMap'
+require 'src/world/Dungeon'
+require 'src/world/Room'
 
 -- global textures table
 gTextures = {
@@ -56,7 +60,9 @@ gTextures = {
     ['roguelike'] = love.graphics.newImage('assets/graphics/roguelike.png'),
 
     -- background images    
-    ['background'] = love.graphics.newImage('assets/graphics/background.png')
+    ['background'] = love.graphics.newImage('assets/graphics/background.png'),    
+    ['background_sprites'] = love.graphics.newImage('assets/graphics/background_sprites.png')
+
 }
 
 -- global Quads table
@@ -65,8 +71,10 @@ gFrames = {
     ['characters'] = GenerateQuads(gTextures['characters'], 16, 16, 1),
     ['indoors'] = GenerateQuads(gTextures['indoors'], 16, 16, 1),
     ['city'] = GenerateQuads(gTextures['city'], 16, 16, 1),
-    ['roguelike'] = GenerateQuads(gTextures['roguelike'], 16, 16, 1)
-    
+    ['roguelike'] = GenerateQuads(gTextures['roguelike'], 16, 16, 1),
+
+    -- backgrounds 4140 x 1074
+    ['background_sprites'] = GenerateQuads(gTextures['background_sprites'], 4140/5, 1074/3, 0)
 }
 
 -- global Fonts table

@@ -1,4 +1,6 @@
--- declaration of constants
+--[[
+    Setup the constants for later use
+]]--
 
 VIRTUAL_WIDTH = 384
 VIRTUAL_HEIGHT = 216
@@ -7,3 +9,23 @@ WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
 TILE_SIZE = 16
+
+
+--
+-- entity constants
+--
+PLAYER_WALK_SPEED = 100
+
+--
+-- map constants
+--
+-- number of tiles
+MAP_WIDTH = VIRTUAL_WIDTH * 2 / TILE_SIZE
+MAP_HEIGHT = VIRTUAL_HEIGHT * 2 / TILE_SIZE
+
+MAP_RENDER_OFFSET_X = (VIRTUAL_WIDTH - (MAP_WIDTH * TILE_SIZE)) / 2
+MAP_RENDER_OFFSET_Y = (VIRTUAL_HEIGHT - (MAP_HEIGHT * TILE_SIZE)) / 2
+
+--
+-- tile IDs
+--

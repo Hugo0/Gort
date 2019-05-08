@@ -7,19 +7,20 @@
     the tilesize as well as the margin between tiles 
     (1px is good as margin to avoid bleeding)
 ]]
+
 function GenerateQuads(atlas, tilewidth, tileheight, margin)
-    local sheetWidth = atlas:getWidth() / tilewidth
-    local sheetHeight = atlas:getHeight() / tileheight
+    local sheetWidth = atlas:getWidth() / (tilewidth + margin)
+    local sheetHeight = atlas:getHeight() / (tileheight + margin)
 
-    local spritesheet = {}
     local sheetCounter = 1
+    local spritesheet = {}
 
-    for y = 1, sheetHeight do -- loop vertically
-        for x = 1, sheetWidth do -- loop horizontally
+    for y = 0, sheetHeight - 1 do
+        for x = 0, sheetWidth - 1 do
             spritesheet[sheetCounter] =
                 love.graphics.newQuad(
-                    x * tilewidth + x*margin, -- add the margin
-                    y * tileheight + y*margin, -- add the margin
+                    x * tilewidth + x*margin, -- x-coordinate of quad
+                    y * tileheight + y*margin, -- y-coordinate of quad
                     tilewidth,
                     tileheight,
                     atlas:getDimensions()
