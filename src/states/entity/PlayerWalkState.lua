@@ -88,15 +88,6 @@ function PlayerWalkState:update(dt)
         self.entity:changeState('idle')
     end
 
-    -- if love.keyboard.wasPressed('space') then
-    --     self.entity:changeState('swing-sword')
-    -- end
-
-    -- perform base collision detection against walls
-    --EntityWalkState.update(self, dt)
-
-    -- if we bumped something when checking collision, check any object collisions
-
     if self.entity.direction == 'left' then        
         -- adjust position
         self.entity.x = self.entity.x - PLAYER_WALK_SPEED * dt
@@ -112,4 +103,14 @@ function PlayerWalkState:update(dt)
         -- temporarily adjust position
         self.entity.y = self.entity.y + PLAYER_WALK_SPEED * dt
     end
+    
+    -- if love.keyboard.wasPressed('space') then
+    --     self.entity:changeState('swing-sword')
+    -- end
+
+    -- perform base collision detection against walls
+    --EntityWalkState.update(self, dt)
+
+    -- if we bumped something when checking collision, check any object collisions
+
 end

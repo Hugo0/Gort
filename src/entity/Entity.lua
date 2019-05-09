@@ -17,9 +17,31 @@ function Entity:init(def)
 
     self.x = def.x
 
+    -- attributes
+    self.walkSpeed = def.walkSpeed or 50
+
     -- partially raised on the tile just to simulate height/perspective
     self.y = def.y
     return self
+end
+
+function Entity:move(dt, tiles)
+    if self.direction == 'left' then        
+        -- adjust position
+        selfx = self.x - PLAYER_WALK_SPEED * dt
+
+    elseif self.direction == 'right' then        
+        -- adjust position
+        self.x = self.x + PLAYER_WALK_SPEED * dt
+
+    elseif self.direction == 'up' then
+        -- adjust position
+        self.y = self.y - PLAYER_WALK_SPEED * dt 
+    else        
+        -- temporarily adjust position
+        self.y = self.y + PLAYER_WALK_SPEED * dt
+    end
+
 end
 
 function Entity:changeState(name)

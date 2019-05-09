@@ -1,9 +1,6 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    Tile class, stores information about each tile
+    as well as :render() and :update() functions
 ]]
 
 Tile = Class{}
@@ -11,6 +8,9 @@ Tile = Class{}
 function Tile:init(def)
     self.x = def.x or nil
     self.y = def.y or nil
+    self.gridX = def.gridX or nil
+    self.gridY = def.gridY or nil
+
     self.id = def.id or nil
     self.texture = def.texture or 'dungeon'
 
@@ -27,7 +27,7 @@ function Tile:render()
     love.graphics.draw(
         gTextures[self.texture],
         gFrames[self.texture][self.id],
-        (self.x - 1) * TILE_SIZE,
-        (self.y - 1) * TILE_SIZE
+        self.x,
+        self.y
     )
 end

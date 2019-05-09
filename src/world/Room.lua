@@ -11,8 +11,8 @@ Room = Class{}
 function Room:init(player)
 
     -- number of horizontal and vertical tiles
-    self.width = 50
-    self.height = 50
+    self.width = 20
+    self.height = 20
 
     -- player table
     self.player = player
@@ -26,13 +26,28 @@ function Room:init(player)
         rotation = 0
     }
 
-    gCamera = self.camera
-
     --[[ tiles is a 2D matrix where we store all our individual
          tiles, and their attributes: if they are collidable,
          effects they may spawn, etc... ]]
     self.tiles = {}
     self:generateTiles()
+
+    -- set position of player, looping through tiles and finding the first floor tile
+    for y=1, self.height do
+        for x=1, self.width do
+            if self.tiles[y][x].solid == 0 then
+                -- set player position to this floor tile
+                self.player.x = self.tiles[y][x].x
+                self.player.y = self.tiles[y][x].y
+
+                goto continue
+            end
+        end
+    end
+    ::continue::
+
+    -- set position of exit
+
 
     -- -- entities in the room
     -- self.entities = {}
@@ -41,10 +56,6 @@ function Room:init(player)
     -- -- game objects in the room
     -- self.objects = {}
     -- self:generateObjects()    
-
-    -- -- used for centering the dungeon rendering
-    -- self.renderOffsetX = MAP_RENDER_OFFSET_X
-    -- self.renderOffsetY = MAP_RENDER_OFFSET_Y
 end
 
 --[[
@@ -70,11 +81,11 @@ function Room:generateTiles()
     print_astray_tiles(astray_tiles)
 
     -- convert our newly generated dungeon into a spritesheet table
-    for y = 1, self.height do       
+    for gridY = 1, self.height + 1 do       
         table.insert(self.tiles, {}) -- 1D Vector 
         
-        for x = 1, self.width do
-            local astray_tile = astray_tiles[y][x]
+        for gridX = 1, self.width + 1 do
+            local astray_tile = astray_tiles[gridY-1][gridX-1]
 
             -- values that the tile will take
             local id = 1
@@ -97,10 +108,12 @@ function Room:generateTiles()
             end
 
             -- insert the tile
-            table.insert(self.tiles[y], 
+            table.insert(self.tiles[gridY], 
                 Tile {
-                    x = x,
-                    y = y,
+                    gridX = gridX,                    
+                    gridY = gridY,
+                    x = (gridX - 1) * TILE_SIZE,
+                    y = (gridY - 1) * TILE_SIZE,
                     id = id,
                     texture = 'dungeon',
                     solid = solid
@@ -307,15 +320,10 @@ function Room:render()
     self.camera:set()
 
     -- render all the tiles
-    for y = 1, self.height do
-        for x = 1, self.width do
+    for y = 1, #self.tiles do
+        for x = 1, #self.tiles[1] do
             local tile = self.tiles[y][x]
-            love.graphics.draw(
-                gTextures['dungeon'], -- Texture
-                gFrames['dungeon'][tile.id], -- Quad
-                (x - 1) * TILE_SIZE,
-                (y - 1) * TILE_SIZE
-            )
+            tile:render()
         end
     end
 

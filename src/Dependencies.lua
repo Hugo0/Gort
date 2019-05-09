@@ -95,7 +95,7 @@ gFonts = {
 
 -- global sounds & music table
 gSounds = {
-    ['field-music'] = love.audio.newSource('assets/sounds/field_music.wav'),
+    ['field-music'] = love.audio.newSource('assets/sounds/ruins_explore.mp3'),
     ['battle-music'] = love.audio.newSource('assets/sounds/battle_music.mp3'),
     ['blip'] = love.audio.newSource('assets/sounds/blip.wav'),
     ['powerup'] = love.audio.newSource('assets/sounds/powerup.wav'),
