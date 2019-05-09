@@ -11,12 +11,22 @@ Room = Class{}
 function Room:init(player)
 
     -- number of horizontal and vertical tiles
-    self.width = 16
-    self.height = 16
+    self.width = 50
+    self.height = 50
 
-    -- reference to player for collisions, etc.
+    -- player table
     self.player = player
-    --self.player:changeState('idle')
+
+    -- camera to follow the player
+    self.camera = Camera {
+        x = 0,
+        y = 0,
+        scaleX = 1,
+        scaleY = 1,
+        rotation = 0
+    }
+
+    gCamera = self.camera
 
     --[[ tiles is a 2D matrix where we store all our individual
          tiles, and their attributes: if they are collidable,
@@ -44,11 +54,17 @@ end
 function Room:generateTiles()
 
     -- Maze generator to generate uneven maps
-    -- Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
+    -- Astray:new(width/2-1, height/2-1, changeDirectionModifier 
     local generator = astray.Astray:new(
         self.width/2, self.height/2,
-        30, 70, 50,
-        astray.RoomGenerator:new(4, 2, 4, 2, 4))
+        30, 70, 50, -- (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) )
+        astray.RoomGenerator:new(--rooms, minWidth, maxWidth, minHeight, maxHeight
+        math.floor(self.width /10),-- number of rooms
+        math.floor(self.width /20), -- minWidth of rooms
+        math.floor(self.width /10), -- maxWidth of rooms
+        math.floor(self.height /20), -- minHeight of rooms
+        math.floor(self.height /10) -- maxHeight of rooms
+    ))
     local astray_dungeon = generator:Generate()
     local astray_tiles = generator:CellToTiles(astray_dungeon)
     print_astray_tiles(astray_tiles)
@@ -56,23 +72,40 @@ function Room:generateTiles()
     -- convert our newly generated dungeon into a spritesheet table
     for y = 1, self.height do       
         table.insert(self.tiles, {}) -- 1D Vector 
-        local id = 1     
-
+        
         for x = 1, self.width do
             local astray_tile = astray_tiles[y][x]
 
+            -- values that the tile will take
+            local id = 1
+            local texture = 'dungeon-wall-dirt'
+            local solid = 1
+
             if astray_tile == '#' then
                 id = rand_id(TILE_IDS['dungeon-wall-dirt'])
+                local texture = 'dungeon'
+                solid = 1
+                
             elseif astray_tile == ' ' then                
                 id = rand_id(TILE_IDS['dungeon-floor-dirt'])
+                local texture = 'dungeon'
+                solid = 0
             else
                 id = rand_id(TILE_IDS['dungeon-floor-dirt-checkered'])
+                local texture = 'dungeon'
+                solid = 0
             end
 
             -- insert the tile
-            table.insert(self.tiles[y], {
-                id = id
-            })
+            table.insert(self.tiles[y], 
+                Tile {
+                    x = x,
+                    y = y,
+                    id = id,
+                    texture = 'dungeon',
+                    solid = solid
+                }
+            )
         end
     end
 end
@@ -152,6 +185,7 @@ end
 function Room:update(dt)
     
     self.player:update(dt)
+    self.camera:follow(self.player)
 
     -- for i = #self.entities, 1, -1 do
     --     local entity = self.entities[i]
@@ -269,15 +303,18 @@ function Room:update(dt)
 end
 
 function Room:render()
-    
+    -- set camera
+    self.camera:set()
+
+    -- render all the tiles
     for y = 1, self.height do
         for x = 1, self.width do
             local tile = self.tiles[y][x]
             love.graphics.draw(
                 gTextures['dungeon'], -- Texture
                 gFrames['dungeon'][tile.id], -- Quad
-                (x - 1) * TILE_SIZE,-- + self.renderOffsetX + self.adjacentOffsetX, -- x
-                (y - 1) * TILE_SIZE --+ self.renderOffsetY + self.adjacentOffsetY -- y
+                (x - 1) * TILE_SIZE,
+                (y - 1) * TILE_SIZE
             )
         end
     end
@@ -294,4 +331,6 @@ function Room:render()
     
     -- render player
     self.player:render()
+    -- reset camera
+    self.camera:unset()
 end

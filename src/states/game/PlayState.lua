@@ -40,5 +40,8 @@ function PlayState:update(dt)
 end
 
 function PlayState:render()
+    -- black background
+    love.graphics.clear()
+    -- render current room and all its stuff (players, entities etc..)
     self.room:render()
 end

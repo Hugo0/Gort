@@ -51,6 +51,7 @@ require 'src/world/Tile'
 require 'src/world/TileMap'
 require 'src/world/Dungeon'
 require 'src/world/Room'
+require 'src/world/Camera'
 
 -- global textures table
 gTextures = {

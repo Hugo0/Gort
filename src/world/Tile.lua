@@ -12,9 +12,9 @@ function Tile:init(def)
     self.x = def.x or nil
     self.y = def.y or nil
     self.id = def.id or nil
-    self.texture = def.texture or 'tiles'
+    self.texture = def.texture or 'dungeon'
 
-    self.solid = def.id or 1
+    self.solid = def.solid or 1
 
 
 end

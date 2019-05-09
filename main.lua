@@ -76,7 +76,20 @@ end
 
 -- this function also gets called every frame by Löve2D
 function love.draw()
+    -- set resolution and screen width etc
     push:start()
+
+    -- -- set camera
+    -- if gCamera then
+    --     gCamera:set()
+    -- end
+    -- render all the stacks
     gStateStack:render()
+
+    -- -- reset camera
+    -- if gCamera then
+    --     gCamera:unset()
+    -- end
+
     push:finish()
 end
