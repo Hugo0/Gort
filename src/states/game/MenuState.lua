@@ -74,7 +74,11 @@ function MenuState:render()
     local sx = VIRTUAL_WIDTH / (img:getWidth()/5)
     local sy = VIRTUAL_HEIGHT / (img:getHeight()/3)
     local index = math.floor(self.background_timer*5) % 12 + 1    
-    love.graphics.setColor(255, 100, 255, 255)
+    love.graphics.setColor(
+        128 * (math.sin(self.background_timer*0.5) + 1) -1,
+        128 * (math.sin(self.background_timer*0.3 + math.pi) + 1) -1,
+        128 * (math.sin(self.background_timer*0.7 + math.pi/2) + 1) -1,
+        255)
     love.graphics.draw( img, gFrames['background_sprites'][index], 0, 0, 0, sx, sy )
 
     -- render menu    

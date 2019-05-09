@@ -5,6 +5,7 @@ Event = require 'lib/knife.event'
 push = require 'lib/push'
 Timer = require 'lib/knife.timer'
 moonshine = require 'lib/moonshine'
+astray = require 'lib/astray'
 
 -- Configuration & Utility
 require 'src/constants'
@@ -15,6 +16,7 @@ require 'src/Util'
 require 'src/entity/entity_defs'
 require 'src/entity/Entity'
 require 'src/entity/Player'
+require 'src/entity/Animation'
 
 -- Graphical User Interface
 require 'src/gui/Menu'
@@ -54,7 +56,9 @@ require 'src/world/Room'
 gTextures = {
     -- spritesheets
     ['dungeon'] = love.graphics.newImage('assets/graphics/dungeon.png'),
-    ['characters'] = love.graphics.newImage('assets/graphics/characters.png'),
+    ['player'] = love.graphics.newImage('assets/graphics/characters/spr_character.png'),
+    ['player-death'] = love.graphics.newImage('assets/graphics/characters/spr_character_death.png'),
+    ['character-modules'] = love.graphics.newImage('assets/graphics/characters.png'),
     ['indoors'] = love.graphics.newImage('assets/graphics/indoors.png'),
     ['city'] = love.graphics.newImage('assets/graphics/city.png'),
     ['roguelike'] = love.graphics.newImage('assets/graphics/roguelike.png'),
@@ -68,7 +72,9 @@ gTextures = {
 -- global Quads table
 gFrames = {
     ['dungeon'] = GenerateQuads(gTextures['dungeon'], 16, 16, 1),
-    ['characters'] = GenerateQuads(gTextures['characters'], 16, 16, 1),
+    ['player'] = GenerateQuads(gTextures['player'], 16, 16, 0),
+    ['player-death'] = GenerateQuads(gTextures['player-death'], 16, 16, 1),
+    ['characters'] = GenerateQuads(gTextures['character-modules'], 16, 16, 1),
     ['indoors'] = GenerateQuads(gTextures['indoors'], 16, 16, 1),
     ['city'] = GenerateQuads(gTextures['city'], 16, 16, 1),
     ['roguelike'] = GenerateQuads(gTextures['roguelike'], 16, 16, 1),

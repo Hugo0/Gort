@@ -9,14 +9,17 @@
 ]]
 
 function GenerateQuads(atlas, tilewidth, tileheight, margin)
-    local sheetWidth = atlas:getWidth() / (tilewidth + margin)
-    local sheetHeight = atlas:getHeight() / (tileheight + margin)
-
+    -- calculate how many tiles horizontally
+    local sheetWidth = (atlas:getWidth() + margin) / (tilewidth + margin)
+    -- calculate how many tiles vertically
+    local sheetHeight = (atlas:getHeight() + margin) / (tileheight + margin)
+    
     local sheetCounter = 1
     local spritesheet = {}
 
     for y = 0, sheetHeight - 1 do
         for x = 0, sheetWidth - 1 do
+            -- add new quad at x,y to our table
             spritesheet[sheetCounter] =
                 love.graphics.newQuad(
                     x * tilewidth + x*margin, -- x-coordinate of quad
@@ -28,7 +31,6 @@ function GenerateQuads(atlas, tilewidth, tileheight, margin)
             sheetCounter = sheetCounter + 1
         end
     end
-
     return spritesheet
 end
 
@@ -58,6 +60,23 @@ function GenerateTileSets(quads, setsX, setsY, sizeX, sizeY)
     end
 
     return tilesets
+end
+
+function rand_id(table)
+    return table[math.random(#table)]
+end
+
+function print_dim(t)
+    y_length = #t
+    x_length = #t[1]
+
+    for i in pairs(t) do
+        if #t[1] ~= x_length then
+            print('this table has inconsistent dimension length')
+        else
+            print('y_length: ' .. tostring(y_length) .. '  x_length: ' .. tostring(x_length) )
+        end        
+    end
 end
 
 --[[
@@ -98,3 +117,12 @@ function print_r ( t )
     print()
 end
 
+function print_astray_tiles(tiles)
+    for y = 0, #tiles[1] do
+        local line = ''
+        for x = 0, #tiles do
+            line = line .. tiles[y][x]
+        end
+        print(line)
+    end
+end

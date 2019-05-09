@@ -1,9 +1,5 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    Entity class, manages the direction, movement, ai, etc...
 ]]
 
 Entity = Class{}
@@ -13,16 +9,17 @@ function Entity:init(def)
 
     self.animations = self:createAnimations(def.animations)
 
-    self.mapX = def.mapX
-    self.mapY = def.mapY
+    self.mapX = def.mapX or 0
+    self.mapY = def.mapY or 0
 
     self.width = def.width
     self.height = def.height
 
-    self.x = (self.mapX - 1) * TILE_SIZE
+    self.x = def.x
 
-    -- halfway raised on the tile just to simulate height/perspective
-    self.y = (self.mapY - 1) * TILE_SIZE - self.height / 2
+    -- partially raised on the tile just to simulate height/perspective
+    self.y = def.y
+    return self
 end
 
 function Entity:changeState(name)

@@ -1,66 +1,99 @@
 --[[
     GD50
-    Pokemon
+    Legend of Zelda
 
     Author: Colton Ogden
     cogden@cs50.harvard.edu
 ]]
 
-EntityWalkState = Class{__includes = EntityBaseState}
+EntityWalkState = Class{__includes = BaseState}
 
-function EntityWalkState:init(entity, level)
+function EntityWalkState:init(entity)
     self.entity = entity
-    self.level = level
+    self.entity:changeAnimation('walk-down')
+
+    -- used for AI control
+    self.moveDuration = 0
+    self.movementTimer = 0
+
+    -- keeps track of whether we just hit a wall
+    self.bumped = false
+end
+
+function EntityWalkState:update(dt)
     
-    self.canWalk = false
-end
-
-function EntityWalkState:enter(params)
-    self:attemptMove()
-end
-
-function EntityWalkState:attemptMove()
-    self.entity:changeAnimation('walk-' .. tostring(self.entity.direction))
-
-    local toX, toY = self.entity.mapX, self.entity.mapY
+    -- assume we didn't hit a wall
+    self.bumped = false
 
     if self.entity.direction == 'left' then
-        toX = toX - 1
-    elseif self.entity.direction == 'right' then
-        toX = toX + 1
-    elseif self.entity.direction == 'up' then
-        toY = toY - 1
-    else
-        toY = toY + 1
-    end
-
-    -- break out if we try to move out of the map boundaries
-    if toX < 1 or toX > 24 or toY < 1 or toY > 13 then
-        self.entity:changeState('idle')
-        self.entity:changeAnimation('idle-' .. tostring(self.entity.direction))
-        return
-    end
-
-    self.entity.mapY = toY
-    self.entity.mapX = toX
-
-    Timer.tween(0.5, {
-        [self.entity] = {x = (toX - 1) * TILE_SIZE, y = (toY - 1) * TILE_SIZE - self.entity.height / 2}
-    }):finish(function()
-        if love.keyboard.isDown('left') then
-            self.entity.direction = 'left'
-            self.entity:changeState('walk')
-        elseif love.keyboard.isDown('right') then
-            self.entity.direction = 'right'
-            self.entity:changeState('walk')
-        elseif love.keyboard.isDown('up') then
-            self.entity.direction = 'up'
-            self.entity:changeState('walk')
-        elseif love.keyboard.isDown('down') then
-            self.entity.direction = 'down'
-            self.entity:changeState('walk')
-        else
-            self.entity:changeState('idle')
+        self.entity.x = self.entity.x - self.entity.walkSpeed * dt
+        
+        if self.entity.x <= MAP_RENDER_OFFSET_X + TILE_SIZE then 
+            self.entity.x = MAP_RENDER_OFFSET_X + TILE_SIZE
+            self.bumped = true
         end
-    end)
+    elseif self.entity.direction == 'right' then
+        self.entity.x = self.entity.x + self.entity.walkSpeed * dt
+
+        if self.entity.x + self.entity.width >= VIRTUAL_WIDTH - TILE_SIZE * 2 then
+            self.entity.x = VIRTUAL_WIDTH - TILE_SIZE * 2 - self.entity.width
+            self.bumped = true
+        end
+    elseif self.entity.direction == 'up' then
+        self.entity.y = self.entity.y - self.entity.walkSpeed * dt
+
+        if self.entity.y <= MAP_RENDER_OFFSET_Y + TILE_SIZE - self.entity.height / 2 then 
+            self.entity.y = MAP_RENDER_OFFSET_Y + TILE_SIZE - self.entity.height / 2
+            self.bumped = true
+        end
+    elseif self.entity.direction == 'down' then
+        self.entity.y = self.entity.y + self.entity.walkSpeed * dt
+
+        local bottomEdge = VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) 
+            + MAP_RENDER_OFFSET_Y - TILE_SIZE
+
+        if self.entity.y + self.entity.height >= bottomEdge then
+            self.entity.y = bottomEdge - self.entity.height
+            self.bumped = true
+        end
+    end
+end
+
+function EntityWalkState:processAI(params, dt)
+    local room = params.room
+    local directions = {'left', 'right', 'up', 'down'}
+
+    if self.moveDuration == 0 or self.bumped then
+        
+        -- set an initial move duration and direction
+        self.moveDuration = math.random(5)
+        self.entity.direction = directions[math.random(#directions)]
+        self.entity:changeAnimation('walk-' .. tostring(self.entity.direction))
+    elseif self.movementTimer > self.moveDuration then
+        self.movementTimer = 0
+
+        -- chance to go idle
+        if math.random(3) == 1 then
+            self.entity:changeState('idle')
+        else
+            self.moveDuration = math.random(5)
+            self.entity.direction = directions[math.random(#directions)]
+            self.entity:changeAnimation('walk-' .. tostring(self.entity.direction))
+        end
+    end
+
+    self.movementTimer = self.movementTimer + dt
+end
+
+function EntityWalkState:render()
+    local anim = self.entity.currentAnimation
+    love.graphics.draw(
+        gTextures[anim.texture],
+        gFrames[anim.texture][anim:getCurrentFrame()],
+        math.floor(self.entity.x),
+        math.floor(self.entity.y))
+    
+    -- love.graphics.setColor(255, 0, 255, 255)
+    -- love.graphics.rectangle('line', self.entity.x, self.entity.y, self.entity.width, self.entity.height)
+    -- love.graphics.setColor(255, 255, 255, 255)
 end

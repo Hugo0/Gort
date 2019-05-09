@@ -8,10 +8,15 @@
 
 Tile = Class{}
 
-function Tile:init(x, y, id)
-    self.x = x
-    self.y = y
-    self.id = id
+function Tile:init(def)
+    self.x = def.x or nil
+    self.y = def.y or nil
+    self.id = def.id or nil
+    self.texture = def.texture or 'tiles'
+
+    self.solid = def.id or 1
+
+
 end
 
 function Tile:update(dt)
@@ -19,6 +24,10 @@ function Tile:update(dt)
 end
 
 function Tile:render()
-    love.graphics.draw(gTextures['tiles'], gFrames['tiles'][self.id],
-        (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
+    love.graphics.draw(
+        gTextures[self.texture],
+        gFrames[self.texture][self.id],
+        (self.x - 1) * TILE_SIZE,
+        (self.y - 1) * TILE_SIZE
+    )
 end

@@ -1,49 +1,46 @@
 --[[
-    GD50
-    Legend of Zelda
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    Data-driven management of in game entities (players, enemies etc...)
 ]]
 
 ENTITY_DEFS = {
     ['player'] = {
+        walkSpeed = 100,
         animations = {
             ['walk-left'] = {
-                frames = {16, 17, 18, 17},
+                frames = {7},
                 interval = 0.15,
-                texture = 'entities'
+                texture = 'player'
             },
             ['walk-right'] = {
-                frames = {28, 29, 30, 29},
+                frames = {3},
                 interval = 0.15,
-                texture = 'entities'
+                texture = 'player'
             },
             ['walk-down'] = {
-                frames = {4, 5, 6, 5},
+                frames = {1},
                 interval = 0.15,
-                texture = 'entities'
+                texture = 'player'
             },
             ['walk-up'] = {
-                frames = {40, 41, 42, 41},
+                frames = {5},
                 interval = 0.15,
-                texture = 'entities'
+                texture = 'player'
             },
             ['idle-left'] = {
-                frames = {17},
-                texture = 'entities'
+                frames = {7},
+                texture = 'player'
             },
             ['idle-right'] = {
-                frames = {29},
-                texture = 'entities'
+                frames = {3},
+                texture = 'player'
             },
             ['idle-down'] = {
-                frames = {5},
-                texture = 'entities'
+                frames = {1},
+                texture = 'player'
             },
             ['idle-up'] = {
-                frames = {41},
-                texture = 'entities'
+                frames = {5},
+                texture = 'player'
             },
         }
     },

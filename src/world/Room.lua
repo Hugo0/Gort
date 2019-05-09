@@ -9,15 +9,18 @@
 Room = Class{}
 
 function Room:init(player)
-    self.width = MAP_WIDTH
-    self.height = MAP_HEIGHT
+
+    -- number of horizontal and vertical tiles
+    self.width = 16
+    self.height = 16
 
     -- reference to player for collisions, etc.
     self.player = player
+    --self.player:changeState('idle')
 
-    -- tiles is a 2D matrix where we store all our individual
-    -- tiles, and their attributes: if they are collidable,
-    -- effects they may spawn, etc...
+    --[[ tiles is a 2D matrix where we store all our individual
+         tiles, and their attributes: if they are collidable,
+         effects they may spawn, etc... ]]
     self.tiles = {}
     self:generateTiles()
 
@@ -40,50 +43,38 @@ end
 ]]
 function Room:generateTiles()
 
-    -- loop through the rows
-    for y = 1, self.height do
-        table.insert(self.tiles, {}) -- 1D Vector
+    -- Maze generator to generate uneven maps
+    -- Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
+    local generator = astray.Astray:new(
+        self.width/2, self.height/2,
+        30, 70, 50,
+        astray.RoomGenerator:new(4, 2, 4, 2, 4))
+    local astray_dungeon = generator:Generate()
+    local astray_tiles = generator:CellToTiles(astray_dungeon)
+    print_astray_tiles(astray_tiles)
 
-        -- loop through the columns
+    -- convert our newly generated dungeon into a spritesheet table
+    for y = 1, self.height do       
+        table.insert(self.tiles, {}) -- 1D Vector 
+        local id = 1     
+
         for x = 1, self.width do
-            local id = TILE_EMPTY
+            local astray_tile = astray_tiles[y][x]
 
-            if x == 1 and y == 1 then
-                id = TILE_TOP_LEFT_CORNER
-            elseif x == 1 and y == self.height then
-                id = TILE_BOTTOM_LEFT_CORNER
-            elseif x == self.width and y == 1 then
-                id = TILE_TOP_RIGHT_CORNER
-            elseif x == self.width and y == self.height then
-                id = TILE_BOTTOM_RIGHT_CORNER
-            
-            -- random left-hand walls, right walls, top, bottom, and floors
-            elseif x == 1 then
-                id = TILE_LEFT_WALLS
-            elseif x == self.width then
-                id = TILE_RIGHT_WALLS
-            elseif y == 1 then
-                id = TILE_TOP_WALLS
-            elseif y == self.height then
-                id = TILE_BOTTOM_WALLS
+            if astray_tile == '#' then
+                id = rand_id(TILE_IDS['dungeon-wall-dirt'])
+            elseif astray_tile == ' ' then                
+                id = rand_id(TILE_IDS['dungeon-floor-dirt'])
             else
-                id = TILE_FLOORS
+                id = rand_id(TILE_IDS['dungeon-floor-dirt-checkered'])
             end
-            
+
             -- insert the tile
             table.insert(self.tiles[y], {
                 id = id
             })
         end
     end
-
-    --[[ end result is a 2D Matrix like following:
-        tiles = {
-            1 = { 1, 1, 1, 0, 1},
-            2 = { ... },
-            ...
-        }
-    ]]
 end
 
 --[[
@@ -160,7 +151,7 @@ end
 
 function Room:update(dt)
     
-    -- self.player:update(dt)
+    self.player:update(dt)
 
     -- for i = #self.entities, 1, -1 do
     --     local entity = self.entities[i]
@@ -278,6 +269,7 @@ function Room:update(dt)
 end
 
 function Room:render()
+    
     for y = 1, self.height do
         for x = 1, self.width do
             local tile = self.tiles[y][x]
@@ -290,17 +282,16 @@ function Room:render()
         end
     end
 
-    -- render objects
-    for k, object in pairs(self.objects) do
-        object:render(self.adjacentOffsetX, self.adjacentOffsetY)
-    end
+    -- -- render objects
+    -- for k, object in pairs(self.objects) do
+    --     object:render(self.adjacentOffsetX, self.adjacentOffsetY)
+    -- end
 
-    -- render entities
-    for k, entity in pairs(self.entities) do
-        if not entity.dead then entity:render(self.adjacentOffsetX, self.adjacentOffsetY) end
-    end
+    -- -- render entities
+    -- for k, entity in pairs(self.entities) do
+    --     if not entity.dead then entity:render(self.adjacentOffsetX, self.adjacentOffsetY) end
+    -- end
     
-    if self.player then
-        self.player:render()
-    end
+    -- render player
+    self.player:render()
 end
