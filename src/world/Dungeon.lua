@@ -343,6 +343,22 @@ function Dungeon:render()
     
     -- render player
     self.player:render()
-    -- reset camera
+
+    -- lighting system
+    -- Each pixel touched by the circle will have its stencil value set to 1. The rest will be 0.
+    love.graphics.stencil(function () 
+        
+        love.graphics.setColor(0,0,0,50)
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*2)
+    end, "replace", 1)
+
+    -- Configure the stencil test to only allow rendering on pixels whose stencil value is equal to 0.
+    -- This will end up being every pixel *except* ones that were touched by the circle drawn as a stencil.
+    love.graphics.setStencilTest("equal", 0)
+    love.graphics.setColor(0,0,0,200)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+    love.graphics.setStencilTest()
+
+    -- -- reset camera
     self.camera:unset()
 end

@@ -10,10 +10,11 @@ end
 
 function VictoryState:update(dt)
 
-    -- wait for user input
-    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
-        gStateStack:pop() -- return to Menu
-    end
+    -- -- wait for user input
+    -- if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+    --     gSounds['parakeets']:stop(true)
+    --     gStateStack:pop() -- return to Menu
+    -- end
 end
 
 function VictoryState:render()
