@@ -16,6 +16,9 @@ function Tile:init(def)
 
     self.solid = def.solid or 1
 
+    self.width = 16
+    self.height = 16
+
 
 end
 

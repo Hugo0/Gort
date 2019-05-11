@@ -14,15 +14,16 @@ function MenuState:init()
         items = {
             {
                 text = 'Play',
-                onSelect = function()
+                onSelect = function()                    
+                    gSounds['intro-music']:stop()    
                     gSounds['run']:play()  
-                    gStateStack:push(FadeInState({
+                    gStateStack:push(FadeOutState({
                         r = 0, g = 0, b = 0
                     }, 1,
-                    function() -- callback for after FadeIn
-                        gSounds['intro-music']:stop()
+                    function() -- callback for after FadeOut
                         gStateStack:push(PlayState())
-                    end))
+                    end
+                    ))
                 end
             },
             {

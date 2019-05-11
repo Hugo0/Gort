@@ -9,17 +9,21 @@ function FadeInState:init(color, time, onFadeComplete)
     self.r = color.r
     self.g = color.g
     self.b = color.b
-    self.opacity = 0
+    self.opacity = 255
     self.time = time
 
     -- tween the opacity gradually
     Timer.tween(self.time, {
-        [self] = {opacity = 255}
+        [self] = {opacity = 0}
     })
     :finish(function()
         gStateStack:pop() -- pop self from stack
         onFadeComplete() -- callback function
     end)
+end
+
+function FadeInState:update(dt)
+
 end
 
 function FadeInState:render()

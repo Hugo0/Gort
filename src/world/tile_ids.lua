@@ -9,7 +9,7 @@ TILE_IDS = {
     ['half-tall-grass'] = 50,
     ['dungeon-floor-dirt'] = {365,366,367,368,369},
     ['dungeon-floor-dirt-checkered'] = {394,395,396,397,398},
-    ['dungeon-wall-dirt'] = {185}
+    ['dungeon-wall-dirt'] = {427}
 }
 
 TILE_EMPTY = 3

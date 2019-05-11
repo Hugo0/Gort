@@ -3,6 +3,7 @@
    Holds all the information regarding the player
 ]]
 
+-- inherit all functions from Entity class
 Player = Class{__includes = Entity}
 
 function Player:init(def)

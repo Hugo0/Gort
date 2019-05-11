@@ -12,7 +12,7 @@ function Camera:init(def)
 end
 
 -- set camera to follow entity (probably player)
--- this took me SO LONG 
+-- this took me SO LONG to get right
 function Camera:follow(entity, marginX, marginY)
     -- margin we allow until we move the camera
     local marginX = margin or (VIRTUAL_WIDTH / 10)

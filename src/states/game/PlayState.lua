@@ -10,6 +10,7 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
 
+
     -- init player
     self.player = Player {
         animations = ENTITY_DEFS['player'].animations,
@@ -26,22 +27,23 @@ function PlayState:init()
 
         -- rendering and collision offset for spaced sprites
         offsetY = 5
-    }
+    }    
     
-    --init room and pass player table
-    self.room = Room(self.player)
+    --init dungeon and pass player table
+    self.dungeon = Dungeon(self.player)
+    self.player.entity.dungeon = self.dungeon
 
     gSounds['field-music']:setLooping(true)
     gSounds['field-music']:play()
 end
 
 function PlayState:update(dt)
-    self.room:update(dt)
+    self.dungeon:update(dt)
 end
 
 function PlayState:render()
     -- black background
     love.graphics.clear()
-    -- render current room and all its stuff (players, entities etc..)
-    self.room:render()
+    -- render current dungeon and all its stuff (players, entities etc..)
+    self.dungeon:render()
 end
