@@ -11,14 +11,14 @@ function Tile:init(def)
     self.gridX = def.gridX or nil
     self.gridY = def.gridY or nil
 
-    self.id = def.id or nil
+    -- collection of ids to draw
+    self.ids = def.ids or nil
     self.texture = def.texture or 'dungeon'
 
     self.solid = def.solid or 1
 
     self.width = 16
     self.height = 16
-
 
 end
 
@@ -27,10 +27,18 @@ function Tile:update(dt)
 end
 
 function Tile:render()
-    love.graphics.draw(
-        gTextures[self.texture],
-        gFrames[self.texture][self.id],
-        self.x,
-        self.y
-    )
+    -- draw every texture in ids sequentially
+    for i, value in ipairs(self.ids) do
+        -- set opacity
+        love.graphics.setColor( 255, 255, 255, value.opacity or 255 ) 
+        -- draw texture
+        love.graphics.draw(
+            gTextures[value.texture],
+            gFrames[value.texture][value.id],
+            self.x,
+            self.y
+        )
+        -- reset color
+        love.graphics.setColor( 255, 255, 255, 255 ) 
+    end
 end

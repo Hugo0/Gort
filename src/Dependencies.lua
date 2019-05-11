@@ -43,6 +43,8 @@ require 'src/states/game/StartState'
 require 'src/states/game/MenuState'
 require 'src/states/game/AboutState'
 require 'src/states/game/InstructionsState'
+require 'src/states/game/GameOverState'
+require 'src/states/game/VictoryState'
 
 -- world management
 require 'src/world/Level'
@@ -52,6 +54,8 @@ require 'src/world/TileMap'
 require 'src/world/Dungeon'
 require 'src/world/Dungeon2'
 require 'src/world/Camera'
+require 'src/world/GameObject'
+require 'src/world/game_objects'
 
 -- global textures table
 gTextures = {
@@ -66,7 +70,8 @@ gTextures = {
 
     -- background images    
     ['background'] = love.graphics.newImage('assets/graphics/background.png'),    
-    ['background_sprites'] = love.graphics.newImage('assets/graphics/background_sprites.png')
+    ['background_sprites'] = love.graphics.newImage('assets/graphics/background_sprites.png'),
+    ['forest'] = love.graphics.newImage('assets/graphics/forest.png')
 
 }
 
@@ -105,5 +110,6 @@ gSounds = {
     ['exp'] = love.audio.newSource('assets/sounds/exp.wav'),
     ['levelup'] = love.audio.newSource('assets/sounds/levelup.wav'),
     ['victory-music'] = love.audio.newSource('assets/sounds/victory.wav'),
-    ['intro-music'] = love.audio.newSource('assets/sounds/intro.mp3')
+    ['intro-music'] = love.audio.newSource('assets/sounds/intro.mp3'),
+    ['parakeets'] = love.audio.newSource('assets/sounds/parakeets.mp3')
 }

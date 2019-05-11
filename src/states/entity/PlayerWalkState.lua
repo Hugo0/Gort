@@ -28,11 +28,12 @@ function PlayerWalkState:update(dt)
     -- move around
     self.entity:move(dt, self.entity.dungeon)
     
-    -- if love.keyboard.wasPressed('space') then
-    --     self.entity:changeState('swing-sword')
-    -- end
+    -- check for collisions with objects
+    for i, obj in ipairs(self.entity.dungeon.objects) do
+        if self.entity:collides(obj) then
+            obj.onCollide()
+        end
+    end
 
-    -- perform base collision detection against walls
-    -- EntityWalkState.update(self, dt)
-
+    -- self.entity:changeState('swing-sword')
 end

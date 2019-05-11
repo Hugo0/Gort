@@ -42,16 +42,13 @@ function Dungeon:init(player)
     end
     ::continue::
 
-    -- set position of exit
-
-
     -- -- entities in the Dungeon
     -- self.entities = {}
     -- self:generateEntities()
 
-    -- -- game objects in the Dungeon
-    -- self.objects = {}
-    -- self:generateObjects()    
+    -- game objects in the Dungeon
+    self.objects = {}
+    self:generateObjects()    
 end
 
 --[[
@@ -85,7 +82,7 @@ function Dungeon:generateTiles()
 
             -- values that the tile will take
             local id = 1
-            local texture = 'dungeon-wall-dirt'
+            local texture = 'dungeon'
             local solid = 1
 
             if astray_tile == '#' then
@@ -110,11 +107,24 @@ function Dungeon:generateTiles()
                     gridY = gridY,
                     x = (gridX - 1) * TILE_SIZE,
                     y = (gridY - 1) * TILE_SIZE,
-                    id = id,
-                    texture = 'dungeon',
+                    ids = {{texture = texture, id = id}},
                     solid = solid
                 }
             )
+        end
+    end
+
+    -- insert pretty decoration
+    for y = 1, #self.tiles do
+        for x = 1, #self.tiles[y] do
+            local tile = self.tiles[y][x]
+            if tile.solid == 0  then -- if the tile is not solid we ignore it
+                if math.random(10) == 1 then
+                    table.insert(tile.ids, {texture = 'dungeon', id = rand_id(TILE_IDS['champignons'])} )
+                elseif math.random(10) == 1 then
+                    table.insert(tile.ids, {texture = 'dungeon', id = rand_id(TILE_IDS['bones'])} )
+                end
+            end
         end
     end
 end
@@ -157,35 +167,33 @@ end
     Randomly creates an assortment of obstacles for the player to navigate around.
 ]]
 function Dungeon:generateObjects()
-    -- add the switch
-    table.insert(self.objects, GameObject(
-        GAME_OBJECT_DEFS['switch'],
-        math.random(MAP_RENDER_OFFSET_X + TILE_SIZE,
-                    VIRTUAL_WIDTH - TILE_SIZE * 2 - 16),
-        math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE,
-                    VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16)
-    ))
-    -- add the pot
-    table.insert(self.objects, GameObject(GAME_OBJECT_DEFS['pot'],
-        math.random(MAP_RENDER_OFFSET_X + TILE_SIZE,
-                    VIRTUAL_WIDTH - TILE_SIZE * 2 - 16),
-        math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE,
-                    VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16)))
-
-    -- get a reference to the switch
-    local switch = self.objects[1]
-
-    -- define a function for the switch that will open all doors in the Dungeon
-    switch.onCollide = function()
-        if switch.state == 'unpressed' then
-            switch.state = 'pressed'
-            
-            -- open every door in the room if we press the switch
-            for k, doorway in pairs(self.doorways) do
-                doorway.open = true
+    
+    -- insert exit    
+    local exitSpawned = false
+    while not exitSpawned do
+        for gridY = #self.tiles, 1, -1 do
+            for gridX = #self.tiles[gridY], 1, -1  do
+                local tile = self.tiles[gridY][gridX]
+                if tile.solid == 0  then -- if the tile is not solid we ignore it
+                    if math.random(self.width) == 1 then
+                        if not exitSpawned then                  
+                            -- add the exit
+                            table.insert(self.objects, GameObject(GAME_OBJECT_DEFS['exit'], {
+                                x = (gridX - 1) * TILE_SIZE,
+                                y = (gridY - 1) * TILE_SIZE,
+                                onCollide = function()
+                                    gSounds['heal']:play()
+                                    gStateStack:pop()
+                                    gStateStack:push(VictoryState( ))
+                                end
+                            }))
+                            table.insert(self.tiles[gridY-1][gridX].ids, {texture = 'indoors', id = 292, opacity=150} )
+                            table.insert(self.tiles[gridY-2][gridX].ids, {texture = 'indoors', id = 238, opacity=100} )
+                            exitSpawned = true
+                        end
+                    end
+                end
             end
-
-            gSounds['door']:play()
         end
     end
 end
@@ -323,10 +331,10 @@ function Dungeon:render()
         end
     end
 
-    -- -- render objects
-    -- for k, object in pairs(self.objects) do
-    --     object:render(self.adjacentOffsetX, self.adjacentOffsetY)
-    -- end
+    -- render objects
+    for i, object in ipairs(self.objects) do
+        object:render()
+    end
 
     -- -- render entities
     -- for k, entity in pairs(self.entities) do
