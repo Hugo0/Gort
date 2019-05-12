@@ -1,9 +1,5 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    For when Dialogue is displayed on screen, pause the game
 ]]
 
 DialogueState = Class{__includes = BaseState}

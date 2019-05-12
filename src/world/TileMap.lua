@@ -1,9 +1,6 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    TileMap, for collections of Tiles
+    
 ]]
 
 TileMap = Class{}

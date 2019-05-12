@@ -49,6 +49,10 @@ function Dungeon:init(player)
     -- game objects in the Dungeon
     self.objects = {}
     self:generateObjects()    
+
+    -- glow effect    
+    self.effect = moonshine(moonshine.effects.glow)
+    self.effect.glow.strength = 8
 end
 
 --[[
@@ -114,11 +118,35 @@ function Dungeon:generateTiles()
         end
     end
 
+    -- -- go through tiles and replace the walls adjacent to floor with better texture
+    -- for y = 2, #self.tiles-1 do
+    --     for x = 2, #self.tiles[y]-1 do
+    --         local tile = self.tiles[y][x]
+    --         if tile.solid == 1  then -- if the tile is not solid we ignore it
+    --             if self.tiles[y+1][x].solid == 0 or self.tiles[y-1][x].solid == 0  then
+    --                 tile.ids = {{texture = 'dungeon', id = 156}}
+    --             end
+    --             if self.tiles[y][x+1].solid == 0 and self.tiles[y+1][x].solid == 0 then
+    --                 tile.ids = {{texture = 'dungeon', id = 159}}
+    --             end
+    --             if self.tiles[y][x-1].solid == 0 and self.tiles[y+1][x].solid == 0 then
+    --                 tile.ids = {{texture = 'dungeon', id = 158}}
+    --             end
+    --             if self.tiles[y][x-1].solid == 0 and self.tiles[y-1][x].solid == 0 then
+    --                 tile.ids = {{texture = 'dungeon', id = 187}}
+    --             end
+    --             if self.tiles[y][x+1].solid == 0 and self.tiles[y-1][x].solid == 0 then
+    --                 tile.ids = {{texture = 'dungeon', id = 188}}
+    --             end
+    --         end
+    --     end
+    -- end
+
     -- insert pretty decoration
     for y = 1, #self.tiles do
         for x = 1, #self.tiles[y] do
             local tile = self.tiles[y][x]
-            if tile.solid == 0  then -- if the tile is not solid we ignore it
+            if tile.solid == 0  then -- if the tile is solid we ignore it
                 if math.random(10) == 1 then
                     table.insert(tile.ids, {texture = 'dungeon', id = rand_id(TILE_IDS['champignons'])} )
                 elseif math.random(10) == 1 then
@@ -188,7 +216,9 @@ function Dungeon:generateObjects()
                                 end
                             }))
                             table.insert(self.tiles[gridY-1][gridX].ids, {texture = 'indoors', id = 292, opacity=150} )
-                            table.insert(self.tiles[gridY-2][gridX].ids, {texture = 'indoors', id = 238, opacity=100} )
+                            if gridY ~= 2 then
+                                table.insert(self.tiles[gridY-2][gridX].ids, {texture = 'indoors', id = 238, opacity=100} )
+                            end
                             exitSpawned = true
                         end
                     end
@@ -204,119 +234,6 @@ function Dungeon:update(dt)
     self.player:update(dt)
     self.camera:follow(self.player)
 
-    -- for i = #self.entities, 1, -1 do
-    --     local entity = self.entities[i]
-
-    --     -- remove entity from the table if health is <= 0
-    --     -- We never actually remove the entity from the table! Spent a lot of time figuring this one out :(
-    --     -- I was spawning like 1500 hearts 
-    --     if entity.health <= 0 then
-    --         -- spawn a heart with a % chance
-    --         if math.random(5) == 1 and not entity.dead then
-    --             print('-------')
-                
-    --             table.insert(self.objects, GameObject(
-    --                 GAME_OBJECT_DEFS['heart'], entity.x, entity.y))
-    --         end
-            
-    --         entity.dead = true
-
-    --     elseif not entity.dead then
-    --         entity:processAI({room = self}, dt)
-    --         entity:update(dt)
-    --     end
-
-    --     -- collision between the player and entities in the room
-    --     if not entity.dead and self.player:collides(entity) and not self.player.invulnerable then
-    --         gSounds['hit-player']:play()
-    --         self.player:damage(1)
-    --         self.player:goInvulnerable(1.5)
-
-    --         if self.player.health == 0 then
-    --             gStateMachine:change('game-over')
-    --         end
-    --     end
-    -- end
-
-    -- for k, object in pairs(self.objects) do
-    --     object:update(dt)
-    --     if object.despawn then
-    --         table.remove(self.objects, k)
-    --         self.pot =  false
-    --     end
-
-    --     -- check for collision between projectiles and entities
-    --     if object.projectile == true then
-    --         for i = #self.entities, 1, -1 do
-    --             local entity = self.entities[i]
-
-    --             if entity:collides(object) then
-    --                 if entity ~= self.player then
-    --                     entity:damage(1)
-    --                     gSounds['hit-enemy']:play()
-    --                     -- despawn object
-    --                     table.remove(self.objects, k)
-    --                     self.pot =  false
-    --                 end
-    --             end
-
-    --             object:bumpedWall()
-    --             if object.bumped then                    
-    --                 table.remove(self.objects, k)
-    --             end
-    --         end
-    --     end
-
-    --     -- trigger collision callback on object
-    --     if self.player:collides(object) then
-    --         object:onCollide()
-    --         -- if object is solid then the player can't walk into it
-    --         -- determine the direction from which the player is coming from
-    --         if object.solid then
-    --             -- get the highest diff and not let them move on that axis
-    --             -- is there a better way to do this?
-    --             index, max = getMaxAbsIndexValue({
-    --                 self.player.x - object.x,
-    --                 self.player.y - object.y
-    --                 })
-    --             -- x axis
-    --             if index == 1 then
-    --                 if self.player.x < object.x then
-    --                     self.player.x = object.x - 16
-    --                 else
-    --                     self.player.x = object.x + 16
-    --                 end
-    --             -- y axis
-    --             elseif index == 2 then
-    --                 if self.player.y < object.y then
-    --                     print('player < objecty, moving player down to objecty-16')
-    --                     print(self.player.y, object.y)
-    --                     self.player.y = object.y - 22
-    --                 else
-    --                     self.player.y = object.y + 6
-    --                 end                   
-    --             end
-    --         end
-
-    --         -- check if it's the pot and pick it up
-    --         if object.type == 'pot' then                
-    --             if love.keyboard.wasPressed('return') then
-    --                 self.pot = object
-    --                 self.player:changeState('carry-pot') -- carry the pot
-    --             end
-    --         end
-
-    --         -- if object is consumable then consume it
-    --         if object.consumable then
-    --             -- add health to player object
-    --             self.player.health = object:onConsume(self.player)
-    --             -- despawn object
-    --             table.remove(self.objects, k)
-                
-    --             print(#self.objects)
-    --         end
-    --     end
-    -- end
 end
 
 function Dungeon:render()
@@ -338,27 +255,76 @@ function Dungeon:render()
 
     -- -- render entities
     -- for k, entity in pairs(self.entities) do
-    --     if not entity.dead then entity:render(self.adjacentOffsetX, self.adjacentOffsetY) end
+    --     entity:render()
     -- end
     
     -- render player
     self.player:render()
+    
 
-    -- lighting system
-    -- Each pixel touched by the circle will have its stencil value set to 1. The rest will be 0.
-    love.graphics.stencil(function () 
-        
-        love.graphics.setColor(0,0,0,50)
+    --[[
+        Use Stencils to make progressively larger circles and then paint them black to simulate light
+        This is super inelegant, will have to turn this into a function soon
+    ]]
+    love.graphics.stencil(function ()
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*6)
+    end, "replace", 6, true)
+
+    love.graphics.stencil(function ()
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*5)
+    end, "replace", 5, true)
+
+    love.graphics.stencil(function ()
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*4)
+    end, "replace", 4, true)
+
+    love.graphics.stencil(function ()
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*3)
+    end, "replace", 3, true)
+    
+    love.graphics.stencil(function ()
         love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE*2)
-    end, "replace", 1)
+    end, "replace", 2, true)
 
-    -- Configure the stencil test to only allow rendering on pixels whose stencil value is equal to 0.
-    -- This will end up being every pixel *except* ones that were touched by the circle drawn as a stencil.
+    love.graphics.stencil(function ()
+        love.graphics.circle("fill", self.player.x + self.player.width/2 , self.player.y, TILE_SIZE)
+    end, "replace", 1, true)
+
+    -- paint black all pixels with stencil 0
     love.graphics.setStencilTest("equal", 0)
+    love.graphics.setColor(0,0,0,255)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+
+    
+    -- paint a little black all pixels with stencil 1
+    love.graphics.setStencilTest("equal", 1)
+    love.graphics.setColor(0,0,0,50)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+    
+    -- etc
+    love.graphics.setStencilTest("equal", 2)
+    love.graphics.setColor(0,0,0,100)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+   
+    love.graphics.setStencilTest("equal", 3)
+    love.graphics.setColor(0,0,0,150)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+
+    love.graphics.setStencilTest("equal", 4)
     love.graphics.setColor(0,0,0,200)
     love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+    
+    love.graphics.setStencilTest("equal", 5)
+    love.graphics.setColor(0,0,0,225)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+    
+    love.graphics.setStencilTest("equal", 6)
+    love.graphics.setColor(0,0,0,240)
+    love.graphics.circle("fill", self.player.x, self.player.y, TILE_SIZE*50)
+
+    -- reset stencil test, allow for anything to be drawn
     love.graphics.setStencilTest()
 
-    -- -- reset camera
+    -- reset camera
     self.camera:unset()
 end

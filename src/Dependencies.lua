@@ -47,12 +47,11 @@ require 'src/states/game/GameOverState'
 require 'src/states/game/VictoryState'
 
 -- world management
-require 'src/world/Level'
 require 'src/world/tile_ids'
 require 'src/world/Tile'
 require 'src/world/TileMap'
 require 'src/world/Dungeon'
-require 'src/world/Dungeon2'
+require 'src/world/World'
 require 'src/world/Camera'
 require 'src/world/GameObject'
 require 'src/world/game_objects'

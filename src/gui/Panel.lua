@@ -1,9 +1,5 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    Double bordered Panel, for menus or dialogue boxes
 ]]
 
 Panel = Class{}

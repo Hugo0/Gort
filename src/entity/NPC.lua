@@ -1,9 +1,5 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    NPC class, for future encounter
 ]]
 
 NPC = Class{__includes = Entity}

@@ -1,9 +1,5 @@
 --[[
-    GD50
-    Pokemon
-
-    Author: Colton Ogden
-    cogden@cs50.harvard.edu
+    Progressbar, will be used for HP, Mana, Stamina, XP etc
 ]]
 
 ProgressBar = Class{}

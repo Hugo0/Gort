@@ -30,7 +30,7 @@ function MenuState:init()
                 text = 'Instructions',
                 onSelect = function()
                     gSounds['run']:play()  
-                    gStateStack:push(FadeInState({
+                    gStateStack:push(FadeOutState({
                         r = 0, g = 0, b = 0
                     }, 1,
                     function() -- callback for after FadeIn
@@ -42,7 +42,7 @@ function MenuState:init()
                 text = 'About',
                 onSelect = function()
                     gSounds['run']:play()  
-                    gStateStack:push(FadeInState({
+                    gStateStack:push(FadeOutState({
                         r = 0, g = 0, b = 0
                     }, 1,
                     function() -- callback for after FadeIn
@@ -51,7 +51,7 @@ function MenuState:init()
                 end
             }, 
             {
-                text = 'Return to Menu',
+                text = 'Return',
                 onSelect = function()
                     gSounds['run']:play()                    
                     -- pop battle menu
