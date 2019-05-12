@@ -35,6 +35,8 @@ function Entity:init(def)
     -- attributes
     self.walkSpeed = def.walkSpeed or 50
 
+    self.likesCaves = def.likesCaves or true
+
     return self
 end
 
@@ -80,9 +82,74 @@ function Entity:move(dt)
                     end
                 end
             end
-        end
+            if tile.solid == 0  then 
+                if self:collides(tile) then
+                    if self.likesCaves == true then
+                        local counter = 0
+                        if self.dungeon.tiles[y+1][x].solid == 1 then
+                            counter = counter + 1
+                        end
+                        if self.dungeon.tiles[y-1][x].solid == 1 then
+                            counter = counter + 1
+                        end
+                        if self.dungeon.tiles[y][x+1].solid == 1 then
+                            counter = counter + 1
+                        end
+                        if self.dungeon.tiles[y][x-1].solid == 1 then
+                            counter = counter + 1
+                        end
+                        
+                        if counter == 2 then
+
+
+                            if self.direction == 'left' and self:targetRelativePosition(tile) == 'left' then
+                                -- tp the player so that he doesn't collide anymore
+                                self.x = tile.x + self.hitboxWidth
+                            elseif self.direction == 'right' and self:targetRelativePosition(tile) == 'right' then
+                                -- tp left of tile
+                                self.x = tile.x - self.hitboxWidth
+                            elseif self.direction == 'up' and self:targetRelativePosition(tile) == 'up' then
+                                -- tp down of tile
+                                self.y = tile.y + self.hitboxHeight
+                            elseif self.direction == 'down' and self:targetRelativePosition(tile) == 'down' then 
+                                self.y = tile.y - self.hitboxHeight
+                            end
+                        end
+                    end
+                end
+            end
+        end        
     end
 end
+
+-- if tile.solid == 0  then 
+--     if self.likesCaves == true then
+--         if self.dungeon.tiles[y+1][x].solid == 0 then
+--             if self.direction == 'up'  then
+--                 -- tp down of tile
+--                 self.y = tile.y + self.hitboxHeight
+--             end
+--         end
+--         if self.dungeon.tiles[y-1][x].solid == 0 then
+--             if self.direction == 'down'  then
+--                 -- tp down of tile
+--                 self.y = tile.y - self.hitboxHeight
+--             end
+--         end
+--         if self.dungeon.tiles[y][x+1].solid == 0 then
+--             if self.direction == 'right'  then
+--                 -- tp down of tile
+--                 self.x = tile.x + self.hitboxWidth
+--             end
+--         end
+--         if self.dungeon.tiles[y][x-1].solid == 0 then
+--             if self.direction == 'left'  then
+--                 -- tp down of tile
+--                 self.x = tile.x - self.hitboxWidth
+--             end
+--         end
+--     end
+-- end
 
 -- AABB collision
 function Entity:collides(target)    

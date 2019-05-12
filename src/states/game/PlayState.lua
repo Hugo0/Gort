@@ -17,9 +17,12 @@ function PlayState:init()
         y = (VIRTUAL_HEIGHT / 2) - 8,
         
         width = 16,
-        height = 16
+        height = 16,
+
+        likesCaves = false
     }    
     
+    self.player.likesCaves = false
     --init dungeon and pass player table
     self.dungeon = Dungeon(self.player)
     self.player.entity.dungeon = self.dungeon
@@ -35,6 +38,7 @@ end
 function PlayState:render()
     -- black background
     love.graphics.clear()
+    
     -- render current dungeon and all its stuff (players, entities etc..)
     self.dungeon:render()
 end

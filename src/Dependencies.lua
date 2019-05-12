@@ -115,5 +115,6 @@ gSounds = {
     ['levelup'] = love.audio.newSource('assets/sounds/levelup.wav'),
     ['victory-music'] = love.audio.newSource('assets/sounds/victory.wav'),
     ['intro-music'] = love.audio.newSource('assets/sounds/intro.mp3'),
-    ['parakeets'] = love.audio.newSource('assets/sounds/parakeets.mp3')
+    ['parakeets'] = love.audio.newSource('assets/sounds/parakeets.mp3'),
+    ['tragic-music'] = love.audio.newSource('assets/sounds/tragic-music.mp3')
 }

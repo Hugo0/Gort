@@ -7,8 +7,8 @@ Dungeon = Class{}
 function Dungeon:init(player)
 
     -- number of horizontal and vertical tiles
-    self.width = 10
-    self.height = 10
+    self.width = 60
+    self.height = 60
 
     -- player table
     self.player = player
@@ -67,11 +67,11 @@ function Dungeon:generateTiles()
         self.width/2, self.height/2,
         30, 70, 50, -- (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) )
         astray.RoomGenerator:new(--rooms, minWidth, maxWidth, minHeight, maxHeight
-        math.floor(self.width /10),-- number of rooms
+        math.floor(self.width /5),-- number of rooms
         math.floor(self.width /20), -- minWidth of rooms
-        math.floor(self.width /10), -- maxWidth of rooms
+        math.floor(self.width /15), -- maxWidth of rooms
         math.floor(self.height /20), -- minHeight of rooms
-        math.floor(self.height /10) -- maxHeight of rooms
+        math.floor(self.height /15) -- maxHeight of rooms
     ))
     local astray_dungeon = generator:Generate()
     local astray_tiles = generator:CellToTiles(astray_dungeon)
@@ -168,30 +168,37 @@ function Dungeon:generateEntities()
         for x = 1, #self.tiles[y] do
             local tile = self.tiles[y][x]
             if tile.solid == 0  then -- if the tile is solid we ignore it
-                if math.random(2) == 1 then
-                    local type = types[math.random(#types)] -- choose type of entity to spawn
-                    
-                    table.insert(self.entities, Entity {
-                        animations = ENTITY_DEFS[type].animations,
-                        walkSpeed = ENTITY_DEFS[type].walkSpeed or 20,
+                if math.random(10) == 1 then
 
-                        -- set x and y
-                        x = (x - 1) * TILE_SIZE,
-                        y = (y - 1)  * TILE_SIZE,
+                    if self.tiles[y+1][x].solid == 0 and self.tiles[y-1][x].solid == 0
+                     and self.tiles[y][x+1].solid == 0 and self.tiles[y][x-1].solid == 0 and
+                     self.tiles[y+1][x+1].solid == 0 and self.tiles[y-1][x-1].solid == 0
+                     and self.tiles[y-1][x+1].solid == 0 and self.tiles[y+1][x-1].solid == 0 then
+
+                        local type = types[math.random(#types)] -- choose type of entity to spawn
                         
-                        width = 16,
-                        height = 16,
+                        table.insert(self.entities, Entity {
+                            animations = ENTITY_DEFS[type].animations,
+                            walkSpeed = ENTITY_DEFS[type].walkSpeed or 20,
 
-                        dungeon = self
-                    })
+                            -- set x and y
+                            x = (x - 1) * TILE_SIZE,
+                            y = (y - 1)  * TILE_SIZE,
+                            
+                            width = 16,
+                            height = 16,
 
-                    local i = #self.entities
-                    self.entities[i].stateMachine = StateMachine {
-                        ['walk'] = function() return EntityWalkState(self.entities[i]) end,
-                        ['idle'] = function() return EntityIdleState(self.entities[i]) end
-                    }
+                            dungeon = self
+                        })
 
-                    self.entities[i]:changeState('walk')
+                        local i = #self.entities
+                        self.entities[i].stateMachine = StateMachine {
+                            ['walk'] = function() return EntityWalkState(self.entities[i]) end,
+                            ['idle'] = function() return EntityIdleState(self.entities[i]) end
+                        }
+
+                        self.entities[i]:changeState('walk')
+                    end
                 end
             end
         end
@@ -246,8 +253,8 @@ function Dungeon:update(dt)
         
         -- check for player death
         if self.player:collides(entity) then
-            gStateStack:push(GameOverState())
             gStateStack:pop()
+            gStateStack:push(GameOverState())
         end
     end
 
