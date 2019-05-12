@@ -7,8 +7,8 @@ Dungeon = Class{}
 function Dungeon:init(player)
 
     -- number of horizontal and vertical tiles
-    self.width = 40
-    self.height = 40
+    self.width = 10
+    self.height = 10
 
     -- player table
     self.player = player
@@ -42,9 +42,9 @@ function Dungeon:init(player)
     end
     ::continue::
 
-    -- -- entities in the Dungeon
-    -- self.entities = {}
-    -- self:generateEntities()
+    -- entities in the Dungeon
+    self.entities = {}
+    self:generateEntities()
 
     -- game objects in the Dungeon
     self.objects = {}
@@ -163,31 +163,38 @@ end
 function Dungeon:generateEntities()
     local types = {'skeleton', 'slime', 'bat', 'ghost', 'spider'}
 
-    for i = 1, 10 do
-        local type = types[math.random(#types)]
+    -- spawn entities
+    for y = 1, #self.tiles do
+        for x = 1, #self.tiles[y] do
+            local tile = self.tiles[y][x]
+            if tile.solid == 0  then -- if the tile is solid we ignore it
+                if math.random(2) == 1 then
+                    local type = types[math.random(#types)] -- choose type of entity to spawn
+                    
+                    table.insert(self.entities, Entity {
+                        animations = ENTITY_DEFS[type].animations,
+                        walkSpeed = ENTITY_DEFS[type].walkSpeed or 20,
 
-        table.insert(self.entities, Entity {
-            animations = ENTITY_DEFS[type].animations,
-            walkSpeed = ENTITY_DEFS[type].walkSpeed or 20,
+                        -- set x and y
+                        x = (x - 1) * TILE_SIZE,
+                        y = (y - 1)  * TILE_SIZE,
+                        
+                        width = 16,
+                        height = 16,
 
-            -- ensure X and Y are within bounds of the map
-            x = math.random(MAP_RENDER_OFFSET_X + TILE_SIZE,
-                VIRTUAL_WIDTH - TILE_SIZE * 2 - 16),
-            y = math.random(MAP_RENDER_OFFSET_Y + TILE_SIZE,
-                VIRTUAL_HEIGHT - (VIRTUAL_HEIGHT - MAP_HEIGHT * TILE_SIZE) + MAP_RENDER_OFFSET_Y - TILE_SIZE - 16),
-            
-            width = 16,
-            height = 16,
+                        dungeon = self
+                    })
 
-            health = 1
-        })
+                    local i = #self.entities
+                    self.entities[i].stateMachine = StateMachine {
+                        ['walk'] = function() return EntityWalkState(self.entities[i]) end,
+                        ['idle'] = function() return EntityIdleState(self.entities[i]) end
+                    }
 
-        self.entities[i].stateMachine = StateMachine {
-            ['walk'] = function() return EntityWalkState(self.entities[i]) end,
-            ['idle'] = function() return EntityIdleState(self.entities[i]) end
-        }
-
-        self.entities[i]:changeState('walk')
+                    self.entities[i]:changeState('walk')
+                end
+            end
+        end
     end
 end
 
@@ -230,9 +237,28 @@ end
 
 
 function Dungeon:update(dt)
+
+    -- update entities
+    for k, entity in pairs(self.entities) do
+        
+        entity:processAI(dt)
+        entity:update(dt)
+        
+        -- check for player death
+        if self.player:collides(entity) then
+            gStateStack:push(GameOverState())
+            gStateStack:pop()
+        end
+    end
+
+    -- update objects
+    for k, obj in pairs(self.objects) do
+        obj:update(dt)
+    end
     
     self.player:update(dt)
     self.camera:follow(self.player)
+
 
 end
 
@@ -253,10 +279,10 @@ function Dungeon:render()
         object:render()
     end
 
-    -- -- render entities
-    -- for k, entity in pairs(self.entities) do
-    --     entity:render()
-    -- end
+    -- render entities
+    for i, entity in ipairs(self.entities) do
+        entity:render()
+    end
     
     -- render player
     self.player:render()

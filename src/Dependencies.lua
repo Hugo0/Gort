@@ -60,12 +60,15 @@ require 'src/world/game_objects'
 gTextures = {
     -- spritesheets
     ['dungeon'] = love.graphics.newImage('assets/graphics/dungeon.png'),
-    ['player'] = love.graphics.newImage('assets/graphics/characters/spr_character.png'),
-    ['player-death'] = love.graphics.newImage('assets/graphics/characters/spr_character_death.png'),
-    ['character-modules'] = love.graphics.newImage('assets/graphics/characters.png'),
     ['indoors'] = love.graphics.newImage('assets/graphics/indoors.png'),
     ['city'] = love.graphics.newImage('assets/graphics/city.png'),
     ['roguelike'] = love.graphics.newImage('assets/graphics/roguelike.png'),
+    
+    -- entities
+    ['player'] = love.graphics.newImage('assets/graphics/characters/spr_character.png'),
+    ['player-death'] = love.graphics.newImage('assets/graphics/characters/spr_character_death.png'),
+    ['character-modules'] = love.graphics.newImage('assets/graphics/characters.png'),
+    ['entities'] = love.graphics.newImage('assets/graphics/entities.png'),
 
     -- background images    
     ['background'] = love.graphics.newImage('assets/graphics/background.png'),    
@@ -77,12 +80,14 @@ gTextures = {
 -- global Quads table
 gFrames = {
     ['dungeon'] = GenerateQuads(gTextures['dungeon'], 16, 16, 1),
-    ['player'] = GenerateQuads(gTextures['player'], 16, 16, 0),
-    ['player-death'] = GenerateQuads(gTextures['player-death'], 16, 16, 1),
-    ['characters'] = GenerateQuads(gTextures['character-modules'], 16, 16, 1),
     ['indoors'] = GenerateQuads(gTextures['indoors'], 16, 16, 1),
     ['city'] = GenerateQuads(gTextures['city'], 16, 16, 1),
     ['roguelike'] = GenerateQuads(gTextures['roguelike'], 16, 16, 1),
+    
+    ['player'] = GenerateQuads(gTextures['player'], 16, 16, 0),
+    ['player-death'] = GenerateQuads(gTextures['player-death'], 16, 16, 1),
+    ['characters'] = GenerateQuads(gTextures['character-modules'], 16, 16, 1),
+    ['entities'] = GenerateQuads(gTextures['entities'], 16, 16, 0),
 
     -- backgrounds 4140 x 1074
     ['background_sprites'] = GenerateQuads(gTextures['background_sprites'], 4140/5, 1074/3, 0)

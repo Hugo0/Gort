@@ -1,7 +1,10 @@
 GameOverState = Class{__includes = BaseState}
 
-function GameOverState:init()
-    -- Instructions
+function GameOverState:init()    
+    gSounds['field-music']:stop()
+
+    gSounds['game-over']:play()    
+    gSounds['parakeets']:setLooping(true)
 end
 
 function GameOverState:update(dt)
@@ -22,4 +25,8 @@ function GameOverState:render()
     self.effect(function()
         love.graphics.printf('YOU HAVE DIED', 0, VIRTUAL_HEIGHT / 2 - 72, VIRTUAL_WIDTH, 'center')
     end)
+
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.printf('Press ENTER to try again', 0, VIRTUAL_HEIGHT* 0.75, VIRTUAL_WIDTH, 'center')
 end

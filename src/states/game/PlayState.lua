@@ -17,12 +17,7 @@ function PlayState:init()
         y = (VIRTUAL_HEIGHT / 2) - 8,
         
         width = 16,
-        height = 16,
-
-        health = 6,
-
-        -- rendering and collision offset for spaced sprites
-        offsetY = 5
+        height = 16
     }    
     
     --init dungeon and pass player table

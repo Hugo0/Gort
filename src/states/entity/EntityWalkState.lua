@@ -11,30 +11,24 @@ function EntityWalkState:init(entity)
     -- used for AI control
     self.moveDuration = 0
     self.movementTimer = 0
-
-    -- keeps track of whether we just hit a wall
-    self.bumped = false
 end
 
 function EntityWalkState:update(dt)
-    
-    -- assume we didn't hit a wall
-    self.bumped = false
 
-    if self.entity.direction == 'left' then
-        self.entity.x = self.entity.x - self.entity.walkSpeed * dt
+    self.entity:move(dt)
+    -- if self.entity.direction == 'left' then
+    --     self.entity.x = self.entity.x - self.entity.walkSpeed * dt
         
-    elseif self.entity.direction == 'right' then
-        self.entity.x = self.entity.x + self.entity.walkSpeed * dt
-    elseif self.entity.direction == 'up' then
-        self.entity.y = self.entity.y - self.entity.walkSpeed * dt
-    elseif self.entity.direction == 'down' then
-        self.entity.y = self.entity.y + self.entity.walkSpeed * dt
-    end
+    -- elseif self.entity.direction == 'right' then
+    --     self.entity.x = self.entity.x + self.entity.walkSpeed * dt
+    -- elseif self.entity.direction == 'up' then
+    --     self.entity.y = self.entity.y - self.entity.walkSpeed * dt
+    -- elseif self.entity.direction == 'down' then
+    --     self.entity.y = self.entity.y + self.entity.walkSpeed * dt
+    -- end
 end
 
-function EntityWalkState:processAI(params, dt)
-    local room = params.room
+function EntityWalkState:processAI(dt)
     local directions = {'left', 'right', 'up', 'down'}
 
     if self.moveDuration == 0 then        

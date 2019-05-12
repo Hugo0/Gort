@@ -13,6 +13,11 @@ function Entity:init(def)
     self.width = def.width
     self.height = def.height
 
+    self.hitboxX = def.hitboxX or self.x + 2
+    self.hitboxY = def.hitboxY or self.y + 2
+    self.hitboxWidth = def.hitboxWidth or  self.width - 4
+    self.hitboxHeight = def.hitboxHeight or self.height - 4
+
     -- display x and y positions
     self.displayX = self.x
     self.displayY = self.y - (self.height / 2)
@@ -42,18 +47,18 @@ function Entity:move(dt)
     -- move first and then check for collision
     if self.direction == 'left' then        
         -- adjust position
-        self.x = self.x - PLAYER_WALK_SPEED * dt
+        self.x = self.x - self.walkSpeed * dt
 
     elseif self.direction == 'right' then        
         -- adjust position
-        self.x = self.x + PLAYER_WALK_SPEED * dt
+        self.x = self.x + self.walkSpeed * dt
 
     elseif self.direction == 'up' then
         -- adjust position
-        self.y = self.y - PLAYER_WALK_SPEED * dt 
+        self.y = self.y - self.walkSpeed * dt 
     else        
         -- temporarily adjust position
-        self.y = self.y + PLAYER_WALK_SPEED * dt
+        self.y = self.y + self.walkSpeed * dt
     end
     
     for y = 1, #self.dungeon.tiles do
@@ -63,15 +68,15 @@ function Entity:move(dt)
                 if self:collides(tile) then -- if we collide with the tile
                     if self.direction == 'left' and self:targetRelativePosition(tile) == 'left' then
                         -- tp the player so that he doesn't collide anymore
-                        self.x = tile.x + tile.width
+                        self.x = tile.x + self.hitboxWidth
                     elseif self.direction == 'right' and self:targetRelativePosition(tile) == 'right' then
                         -- tp left of tile
-                        self.x = tile.x - self.width
+                        self.x = tile.x - self.hitboxWidth
                     elseif self.direction == 'up' and self:targetRelativePosition(tile) == 'up' then
                         -- tp down of tile
-                        self.y = tile.y + self.height
+                        self.y = tile.y + self.hitboxHeight
                     elseif self.direction == 'down' and self:targetRelativePosition(tile) == 'down' then 
-                        self.y = tile.y - self.height
+                        self.y = tile.y - self.hitboxHeight
                     end
                 end
             end
@@ -81,8 +86,8 @@ end
 
 -- AABB collision
 function Entity:collides(target)    
-    return not (self.x + self.width < target.x or self.x > target.x + target.width or
-                self.y + self.height < target.y or self.y > target.y + target.height)
+    return not (self.hitboxX + self.hitboxWidth < target.x or self.hitboxX > target.x + target.width or
+                self.hitboxY + self.hitboxHeight < target.y or self.hitboxY > target.y + target.height)
 end
 
 -- returns the relative position of target
@@ -143,6 +148,11 @@ function Entity:update(dt)
     -- set display Y
     self.displayX = self.x
     self.displayY = self.y - (self.height / 3)
+
+    -- update the hitbox
+    self.hitboxX = self.x + 2
+    self.hitboxY = self.y + 2
+
     -- update animation
     self.currentAnimation:update(dt)
     -- update own statemachine
