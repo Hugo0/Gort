@@ -68,10 +68,10 @@ function Dungeon:generateTiles()
         30, 70, 50, -- (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) )
         astray.RoomGenerator:new(--rooms, minWidth, maxWidth, minHeight, maxHeight
         math.floor(self.width /5),-- number of rooms
-        math.floor(self.width /20), -- minWidth of rooms
-        math.floor(self.width /15), -- maxWidth of rooms
-        math.floor(self.height /20), -- minHeight of rooms
-        math.floor(self.height /15) -- maxHeight of rooms
+        math.floor(3), -- minWidth of rooms
+        math.floor(4), -- maxWidth of rooms
+        math.floor(3), -- minHeight of rooms
+        math.floor(4) -- maxHeight of rooms
     ))
     local astray_dungeon = generator:Generate()
     local astray_tiles = generator:CellToTiles(astray_dungeon)
@@ -168,7 +168,7 @@ function Dungeon:generateEntities()
         for x = 1, #self.tiles[y] do
             local tile = self.tiles[y][x]
             if tile.solid == 0  then -- if the tile is solid we ignore it
-                if math.random(10) == 1 then
+                if math.random(7) == 1 then
 
                     if self.tiles[y+1][x].solid == 0 and self.tiles[y-1][x].solid == 0
                      and self.tiles[y][x+1].solid == 0 and self.tiles[y][x-1].solid == 0 and
