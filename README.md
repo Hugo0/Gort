@@ -1,5 +1,6 @@
 # Gort
 Final project for Harvard's CSCI E-23a Course
+Compatible with Love2D 10.2
 
 ### Game Description
 
